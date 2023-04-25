@@ -18,6 +18,7 @@ def run_check_errors(cmd):
 
 
 def collate(
+    operator,
     batch,
     config,
     plate,
@@ -70,9 +71,9 @@ def collate(
     from pycytominer.cyto_utils.cells import SingleCells
 
     # Set up directories (these need to be abspaths to keep from confusing makedirs later)
-    input_dir = pathlib.Path(f"{base_directory}/analysis/{batch}/{plate}/{csv_dir}")
-    backend_dir = pathlib.Path(f"{base_directory}/backend/{batch}/{plate}")
-    cache_backend_dir = pathlib.Path(f"{tmp_dir}/backend/{batch}/{plate}")
+    input_dir = pathlib.Path(f"{base_directory}/analysis/{operator}/{batch}/{plate}/{csv_dir}")
+    backend_dir = pathlib.Path(f"{base_directory}/backend/{operator}/{batch}/{plate}")
+    cache_backend_dir = pathlib.Path(f"{tmp_dir}/backend/{operator}/{batch}/{plate}")
 
     aggregated_file = pathlib.Path(f"{backend_dir}/{plate}.csv")
     backend_file = pathlib.Path(f"{backend_dir}/{plate}.sqlite")
@@ -93,11 +94,11 @@ def collate(
 
         if aws_remote:
 
-            remote_input_dir = f"{aws_remote}/analysis/{batch}/{plate}/{csv_dir}"
+            remote_input_dir = f"{aws_remote}/analysis/{operator}/{batch}/{plate}/{csv_dir}"
 
-            remote_backend_file = f"{aws_remote}/backend/{batch}/{plate}/{plate}.sqlite"
+            remote_backend_file = f"{aws_remote}/backend/{operator}/{batch}/{plate}/{plate}.sqlite"
 
-            remote_aggregated_file = f"{aws_remote}/backend/{batch}/{plate}/{plate}.csv"
+            remote_aggregated_file = f"{aws_remote}/backend/{operator}/{batch}/{plate}/{plate}.csv"
 
             sync_cmd = f"aws s3 sync --exclude * --include */Cells.csv --include */Nuclei.csv --include */Cytoplasm.csv --include */Image.csv {remote_input_dir} {input_dir}"
             if printtoscreen:
@@ -180,9 +181,9 @@ def collate(
         print(f"Aggregating sqlite:///{backend_file}")
 
     if aggregate_only and aws_remote:
-        remote_backend_file = f"{aws_remote}/backend/{batch}/{plate}/{plate}.sqlite"
+        remote_backend_file = f"{aws_remote}/backend/{operator}/{batch}/{plate}/{plate}.sqlite"
 
-        remote_aggregated_file = f"{aws_remote}/backend/{batch}/{plate}/{plate}.csv"
+        remote_aggregated_file = f"{aws_remote}/backend/{operator}/{batch}/{plate}/{plate}.csv"
 
         cp_cmd = ["aws", "s3", "cp", remote_backend_file, backend_file]
         if printtoscreen:
