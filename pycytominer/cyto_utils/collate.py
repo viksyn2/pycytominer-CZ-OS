@@ -38,6 +38,8 @@ def collate(
 
     Parameters
     ----------
+    operator : str
+        Operator name to process
     batch : str
         Batch name to process
     config : str
